@@ -3,9 +3,9 @@ local Wheel = {}
 function Wheel:new(params)
     local inst = {}
     inst.pos = params.pos or { x = 0, y = 0 }
-    inst.size = params.size or { x = 10, y = 30 }
-    inst.speed = params.speed or 0
-    inst.angle = params.angle or 0
+    inst.size = params.size or { x = 0.2, y = 0.5 }
+    inst.velocity = params.velocity or { x = 0, y = 0 }
+    inst.heading = params.heading or 0
 
     inst.draw = self.draw
 
