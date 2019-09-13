@@ -21,6 +21,15 @@ function Car:new(params)
 end
 
 function Car:update(dt)
+    if love.keyboard.isDown('left') then
+        self.steeringAngle = self.steeringAngle - 1 * dt
+    end
+    if love.keyboard.isDown('right') then
+        self.steeringAngle = self.steeringAngle + 1 * dt
+    end
+
+    self.steeringAngle = math.min(math.max(self.steeringAngle, -1), 1)
+
     self.frontWheel = {
         x = self.pos.x + ((self.wheelbase / 2) * math.cos(self.heading)),
         y = self.pos.y + ((self.wheelbase / 2) * math.sin(self.heading))
