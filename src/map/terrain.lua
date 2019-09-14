@@ -17,6 +17,7 @@ function Terrain:new(params)
         y = params.noiseOffset and params.noiseOffset.y or love.math.random()
     }
     inst.noiseScale = params.noiseScale or defaults.scale
+    inst.octaves = params.ocataves or 4
 
     inst.minHeight = 1
     inst.maxHeight = 0
@@ -52,17 +53,27 @@ function Terrain:initialise()
     for x = 1, self.size.x do
         self.height[x] = {}
         for y = 1, self.size.y do
-            local height = love.math.noise(x * self.noiseScale + self.noiseOffset.x, y * self.noiseScale + self.noiseOffset.y)
-            if height < self.minHeight then self.minHeight = height end
-            if height > self.maxHeight then self.maxHeight = height end
-            self.height[x][y] = height
+            self.height[x][y] = 0
         end
     end
+    for i = 1, self.octaves do
+        for x = 1, self.size.x do
+            for y = 1, self.size.y do
+                local height = love.math.noise(x * self.noiseScale * i + self.noiseOffset.x, y * self.noiseScale * i + self.noiseOffset.y)
+                self.height[x][y] = self.height[x][y] + (height / i)
+                if self.height[x][y] < self.minHeight then self.minHeight = self.height[x][y] end
+                if self.height[x][y] > self.maxHeight then self.maxHeight = self.height[x][y] end
+            end
+        end
+    end
+    print('Min height: ' .. self.minHeight .. ' max height: ' .. self.maxHeight)
 end
 
 function Terrain:normalise()
     local range = self.maxHeight - self.minHeight
     local multiplier = 1 / range
+
+    self.minHeight, self.maxHeight = 1, 0
     for x = 1, self.size.x do
         for y = 1, self.size.y do
             self.height[x][y] = (self.height[x][y] - self.minHeight) * multiplier
@@ -70,6 +81,7 @@ function Terrain:normalise()
             if self.height[x][y] > self.maxHeight then self.maxHeight = self.height[x][y] end
         end
     end
+    print('Min height: ' .. self.minHeight .. ' max height: ' .. self.maxHeight)
 end
 
 return Terrain
