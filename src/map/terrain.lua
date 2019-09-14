@@ -17,25 +17,18 @@ function Terrain:new(params)
         y = params.noiseOffset and params.noiseOffset.y or love.math.random()
     }
     inst.noiseScale = params.noiseScale or defaults.scale
-    self.generate(inst)
-
+    
     inst.draw = self.draw
-
+    inst.initialise = self.initialise
+    
+    self.generate(inst)
+    
     return inst
 end
 
 function Terrain:generate()
     self.height = {}
-    local maxHeight, minHeight = 0, 1
-    for x = 1, self.size.x do
-        self.height[x] = {}
-        for y = 1, self.size.y do
-            local height = love.math.noise(x * self.noiseScale + self.noiseOffset.x, y * self.noiseScale + self.noiseOffset.y)
-            if height < minHeight then minHeight = height end
-            if height > maxHeight then maxHeight = height end
-            self.height[x][y] = height
-        end
-    end
+    self:initialise()
 end
 
 function Terrain:draw()
@@ -45,6 +38,16 @@ function Terrain:draw()
             local cellSize = 1
             love.graphics.setColor(g, g, g)
             love.graphics.rectangle('fill', x * cellSize, y * cellSize, cellSize, cellSize)
+        end
+    end
+end
+
+function Terrain:initialise()
+    for x = 1, self.size.x do
+        self.height[x] = {}
+        for y = 1, self.size.y do
+            local height = love.math.noise(x * self.noiseScale + self.noiseOffset.x, y * self.noiseScale + self.noiseOffset.y)
+            self.height[x][y] = height
         end
     end
 end
