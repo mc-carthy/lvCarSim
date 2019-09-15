@@ -46,10 +46,18 @@ end
 function Terrain:draw()
     for x = 1, self.size.x do
         for y = 1, self.size.y do
-            local g = self.height[x][y]
             local cellSize = 1
-            love.graphics.setColor(g, g, g)
-            love.graphics.rectangle('fill', (x - 1) * cellSize, (y - 1) * cellSize, cellSize, cellSize)
+            if self.height[x][y] < 0.2 then
+                love.graphics.setColor(0, 0, 1)
+            elseif self.height[x][y] < 0.4 then
+                love.graphics.setColor(1, 1, 0)
+            elseif self.height[x][y] < 0.6 then
+                love.graphics.setColor(0, 1, 0)
+            elseif self.height[x][y] < 0.8 then
+                love.graphics.setColor(0.5, 0.5, 0.5)
+            else
+                love.graphics.setColor(1, 1, 1)
+            end            love.graphics.rectangle('fill', (x - 1) * cellSize, (y - 1) * cellSize, cellSize, cellSize)
         end
     end
 end
