@@ -8,6 +8,7 @@ local defaults = {
 }
 
 function Terrain:new(params)
+    math.randomseed(os.time())
     local inst = {}
 
     inst.size = {
@@ -47,13 +48,15 @@ function Terrain:draw()
     for x = 1, self.size.x do
         for y = 1, self.size.y do
             local cellSize = 1
-            if self.height[x][y] < 0.2 then
+            if self.height[x][y] < 0.3 then
                 love.graphics.setColor(0, 0, 1)
-            elseif self.height[x][y] < 0.4 then
+            elseif self.height[x][y] < 0.35 then
                 love.graphics.setColor(1, 1, 0)
-            elseif self.height[x][y] < 0.6 then
+            elseif self.height[x][y] < 0.55 then
                 love.graphics.setColor(0, 1, 0)
-            elseif self.height[x][y] < 0.8 then
+            elseif self.height[x][y] < 0.75 then
+                love.graphics.setColor(0, 0.5, 0)
+            elseif self.height[x][y] < 0.85 then
                 love.graphics.setColor(0.5, 0.5, 0.5)
             else
                 love.graphics.setColor(1, 1, 1)
@@ -81,9 +84,9 @@ function Terrain:initialise()
 end
 
 function Terrain:createBorder(params)
-    local borderType = params.borderType or 'square'
+    local borderType = params.borderType or 'circle'
     local outerBorderDistance = 0.5
-    local innerBorderDistance = 0.3
+    local innerBorderDistance = 0.4
     local interBorderDistance = outerBorderDistance - innerBorderDistance
     
     for x = 1, self.size.x do
