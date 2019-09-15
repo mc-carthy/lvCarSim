@@ -28,6 +28,7 @@ function Terrain:new(params)
     inst.draw = self.draw
     inst.initialise = self.initialise
     inst.normalise = self.normalise
+    inst.createBorder = self.createBorder
     
     self.generate(inst)
 
@@ -38,6 +39,8 @@ function Terrain:generate()
     self.height = {}
     self:initialise()
     self:normalise()
+    self:createBorder{}
+    self:normalise()
 end
 
 function Terrain:draw()
@@ -46,7 +49,7 @@ function Terrain:draw()
             local g = self.height[x][y]
             local cellSize = 1
             love.graphics.setColor(g, g, g)
-            love.graphics.rectangle('fill', x * cellSize, y * cellSize, cellSize, cellSize)
+            love.graphics.rectangle('fill', (x - 1) * cellSize, (y - 1) * cellSize, cellSize, cellSize)
         end
     end
 end
@@ -64,18 +67,41 @@ function Terrain:initialise()
                 -- local height = love.math.noise(x * self.noiseScale * i + self.noiseOffset.x, y * self.noiseScale * i + self.noiseOffset.y)
                 local height = Simplex(x * self.noiseScale * i + self.noiseOffset.x, y * self.noiseScale * i + self.noiseOffset.y)
                 self.height[x][y] = self.height[x][y] + (height / i)
-                if self.height[x][y] < self.minHeight then self.minHeight = self.height[x][y] end
-                if self.height[x][y] > self.maxHeight then self.maxHeight = self.height[x][y] end
+            end
+        end
+    end
+end
+
+function Terrain:createBorder(params)
+    local borderType = params.borderType or 'circle'
+    local outerBorderDistance = params.outerBorderDistance or math.min(self.size.x / 2, self.size.y / 2)
+    local innerBorderDistance = params.innerBorderDistance or outerBorderDistance * 0.5
+    local interBorderDistance = outerBorderDistance - innerBorderDistance
+    
+    for x = 1, self.size.x do
+        for y = 1, self.size.y do
+            local dist = math.sqrt(math.pow((x - self.size.x / 2), 2) + math.pow((y - self.size.y / 2), 2))
+            if dist > innerBorderDistance then
+                local maskRatio = 1 - math.min((dist - innerBorderDistance) / interBorderDistance, 1)
+                self.height[x][y] = self.height[x][y] * maskRatio
             end
         end
     end
 end
 
 function Terrain:normalise()
+    self.minHeight, self.maxHeight = 1, 0
+    for x = 1, self.size.x do
+        for y = 1, self.size.y do
+            if self.height[x][y] < self.minHeight then self.minHeight = self.height[x][y] end
+            if self.height[x][y] > self.maxHeight then self.maxHeight = self.height[x][y] end
+        end
+    end
+    
     local low, high = self.minHeight, self.maxHeight
+    self.minHeight, self.maxHeight = 1, 0
     local range = high - low
     local multiplier = 1 / range
-    self.minHeight, self.maxHeight = 1, 0
     for x = 1, self.size.x do
         for y = 1, self.size.y do
             self.height[x][y] = (self.height[x][y] - low) * multiplier
