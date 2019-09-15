@@ -88,7 +88,12 @@ function Terrain:createBorder(params)
     
     for x = 1, self.size.x do
         for y = 1, self.size.y do
-            local dist = math.sqrt(math.pow((x - self.size.x / 2), 2) + math.pow((y - self.size.y / 2), 2))
+            local dist
+            if borderType == 'circle' then
+                dist = math.sqrt(math.pow((x - self.size.x / 2), 2) + math.pow((y - self.size.y / 2), 2))
+            elseif borderType == 'square' then
+                dist = math.max(math.abs(x - self.size.x / 2), math.abs(y - self.size.y / 2))
+            end
             if dist > innerBorderDistance then
                 local maskRatio = 1 - math.min((dist - innerBorderDistance) / interBorderDistance, 1)
                 self.height[x][y] = self.height[x][y] * maskRatio
