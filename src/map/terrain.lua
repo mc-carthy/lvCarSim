@@ -1,5 +1,7 @@
 local Terrain = {}
 
+local Simplex = require('lib.simplex')
+
 local defaults = {
     size = 700,
     scale = 0.01
@@ -59,7 +61,8 @@ function Terrain:initialise()
     for i = 1, self.octaves do
         for x = 1, self.size.x do
             for y = 1, self.size.y do
-                local height = love.math.noise(x * self.noiseScale * i + self.noiseOffset.x, y * self.noiseScale * i + self.noiseOffset.y)
+                -- local height = love.math.noise(x * self.noiseScale * i + self.noiseOffset.x, y * self.noiseScale * i + self.noiseOffset.y)
+                local height = Simplex(x * self.noiseScale * i + self.noiseOffset.x, y * self.noiseScale * i + self.noiseOffset.y)
                 self.height[x][y] = self.height[x][y] + (height / i)
                 if self.height[x][y] < self.minHeight then self.minHeight = self.height[x][y] end
                 if self.height[x][y] > self.maxHeight then self.maxHeight = self.height[x][y] end
