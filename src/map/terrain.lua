@@ -48,19 +48,32 @@ function Terrain:draw()
     for x = 1, self.size.x do
         for y = 1, self.size.y do
             local cellSize = 1
-            if self.height[x][y] < 0.3 then
+            if self.height[x][y] < 0.1 then -- Deep ocean
+                love.graphics.setColor(0, 0, 0.5)
+            elseif self.height[x][y] < 0.2 then -- Mid ocean
                 love.graphics.setColor(0, 0, 1)
-            elseif self.height[x][y] < 0.35 then
-                love.graphics.setColor(1, 1, 0)
-            elseif self.height[x][y] < 0.55 then
-                love.graphics.setColor(0, 1, 0)
-            elseif self.height[x][y] < 0.75 then
-                love.graphics.setColor(0, 0.5, 0)
-            elseif self.height[x][y] < 0.85 then
-                love.graphics.setColor(0.5, 0.5, 0.5)
-            else
+            elseif self.height[x][y] < 0.3 then -- Shallow ocean
+                love.graphics.setColor(0, 0.6, 0.8)
+            elseif self.height[x][y] < 0.375 then -- Light shore
+                love.graphics.setColor(0.8, 0.75, 0.5)
+            elseif self.height[x][y] < 0.4 then -- Dark shore
+                love.graphics.setColor(0.5, 0.4, 0.2)
+            elseif self.height[x][y] < 0.5 then -- Light grass
+                love.graphics.setColor(0.4, 0.5, 0.2)
+            elseif self.height[x][y] < 0.7 then -- Dark grass
+                love.graphics.setColor(0.15, 0.25, 0)
+            elseif self.height[x][y] < 0.75 then -- Medium grass
+                love.graphics.setColor(0.25, 0.4, 0.1)
+            elseif self.height[x][y] < 0.80 then -- Light grass
+                love.graphics.setColor(0.4, 0.5, 0.2)
+            elseif self.height[x][y] < 0.85 then -- Mountain low
+                love.graphics.setColor(0.65, 0.65, 0.65)
+            elseif self.height[x][y] < 0.95 then -- Mountain mid
+                love.graphics.setColor(0.85, 0.85, 0.85)
+            else -- Mountain top
                 love.graphics.setColor(1, 1, 1)
-            end            love.graphics.rectangle('fill', (x - 1) * cellSize, (y - 1) * cellSize, cellSize, cellSize)
+            end            
+            love.graphics.rectangle('fill', (x - 1) * cellSize, (y - 1) * cellSize, cellSize, cellSize)
         end
     end
 end
