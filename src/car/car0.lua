@@ -28,6 +28,13 @@ function Car:update(dt)
         self.steeringAngle = self.steeringAngle + 1 * dt
     end
 
+    if love.keyboard.isDown('up') then
+        self.speed = self.speed + 10 * dt
+    end
+    if love.keyboard.isDown('down') then
+        self.speed = self.speed - 10 * dt
+    end
+
     self.steeringAngle = math.min(math.max(self.steeringAngle, -1), 1)
 
     self.frontWheel = {
