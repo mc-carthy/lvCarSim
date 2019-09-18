@@ -21,6 +21,7 @@ function Terrain:new(params)
     }
     inst.noiseScale = params.noiseScale or defaults.scale
     inst.octaves = params.octaves or 4
+    inst.borderType = params.borderType or 'circle'
 
     inst.minHeight = 1
     inst.maxHeight = 0
@@ -40,7 +41,9 @@ function Terrain:generate()
     self.height = {}
     self:initialise()
     self:normalise()
-    self:createBorder{}
+    self:createBorder{
+        borderType = self.borderType
+    }
     self:normalise()
 end
 
@@ -98,9 +101,8 @@ end
 
 function Terrain:createBorder(params)
     local borderType = params.borderType or 'circle'
-    local outerBorderDistance = 0.5
-    local innerBorderDistance = 0.4
-    local interBorderDistance = outerBorderDistance - innerBorderDistance
+    local outerBorderDistance
+    local innerBorderDistance
     
     for x = 1, self.size.x do
         for y = 1, self.size.y do
@@ -109,9 +111,18 @@ function Terrain:createBorder(params)
             local dy = math.abs(y - self.size.y / 2) / self.size.y
             if borderType == 'circle' then
                 dist = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2))
+                outerBorderDistance = 0.5
+                innerBorderDistance = 0.4
             elseif borderType == 'square' then
+                outerBorderDistance = 0.5
+                innerBorderDistance = 0.3
                 dist = math.max(dx, dy)
+            elseif borderType == 'squircle' then
+                dist = math.pow(math.pow(dx, 4) + math.pow(dy, 4) , 1 / 4)
+                outerBorderDistance = 0.5
+                innerBorderDistance = 0.4
             end
+            local interBorderDistance = outerBorderDistance - innerBorderDistance
             if dist > innerBorderDistance then
                 local maskRatio = 1 - math.min((dist - innerBorderDistance) / interBorderDistance, 1)
                 self.height[x][y] = self.height[x][y] * maskRatio
